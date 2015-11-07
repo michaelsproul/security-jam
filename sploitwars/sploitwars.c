@@ -6,11 +6,11 @@
 // non-executable stack, ASLR on - you need your own leak
 
 const char * products[] = {
-   "black hoodies", "ROPchainz", "rootkits", "botnets", "0days" 
+   "black hoodies", "ROPchainz", "rootkits", "botnets", "0days"
 };
 
 const char * locations[] = {
-    "k17 basement", "silicon road", "nsa coffee shop", "irc.ruxcon.org.au #9447" 
+    "k17 basement", "silicon road", "nsa coffee shop", "irc.ruxcon.org.au #9447"
 };
 
 int fib[20] = {0};
@@ -37,7 +37,7 @@ int random(int min, int max) {
     int range = max - min;
     int divisor = RAND_MAX / (range + 1);
     int retval;
-    do { 
+    do {
         retval = rand() / divisor;
     } while (retval > range);
     retval += min;
@@ -49,11 +49,11 @@ double frandom(double min, double max) {
     return min + f * (max - min);
 }
 
-int int_cmp(const void *a, const void *b) { 
+int int_cmp(const void *a, const void *b) {
     const int *ia = (const int *)a;
     const int *ib = (const int *)b;
-    return *ia  - *ib; 
-} 
+    return *ia  - *ib;
+}
 
 char getinput(void) {
     char ch;
@@ -65,7 +65,7 @@ char getinput(void) {
 void getstr(char * buf, int n) {
     char ch;
     char fmt[1024];
-    sprintf(fmt, "%%%ds", n); 
+    sprintf(fmt, "%%%ds", n);
     scanf(fmt, buf);
     while ((ch = getchar()) && ch != EOF && ch != '\n');
 }
@@ -117,13 +117,13 @@ void init(void) {
     g_player.loc = 0;
     g_player.health = 10;
     g_player.currency = 1337.0;
-    g_player.count[0] = 1; 
+    g_player.count[0] = 1;
     g_player.turn = 0;
     for (int i = 0; i < PRODUCT_COUNT; i++) {
         g_player.count[i] = 0;
     }
     for (int i = 0; i < LOCATION_COUNT; i++) {
-        for (int j = 0; j < PRODUCT_COUNT; j++) { 
+        for (int j = 0; j < PRODUCT_COUNT; j++) {
             int min = (j*j*j*j)*1337;
             int max = (j+1)*(j+1)*(j+1)*(j+1) * 1337;
             g_locs[i].price[j] = frandom(min, max);
@@ -131,15 +131,15 @@ void init(void) {
         }
     }
 
-    int a = 0;  
-    int b = 1;  
-    int x = 0;  
+    int a = 0;
+    int b = 1;
+    int x = 0;
     for (int i = 1; i < FIB_LIMIT; i++) {
-        x = b;  
-        b = a + b;  
-        a = x;  
+        x = b;
+        b = a + b;
+        a = x;
         fib[i] = b;
-    }  
+    }
 }
 
 void do_status(struct player * p) {
@@ -147,7 +147,7 @@ void do_status(struct player * p) {
     printf(":: DAY %d\n", p->turn);
     printf("+++++++++++++++++++++++++++++++++++++++++++++++++\n\n");
     printf("Location: %s\n", locations[p->loc]);
-    printf("Respect: %.2f\n\n", p->currency); 
+    printf("Respect: %.2f\n\n", p->currency);
     for (int i = 0; i < PRODUCT_COUNT; i++) {
         printf("(%d) %s\n", p->count[i], products[i]);
     }
@@ -155,9 +155,9 @@ void do_status(struct player * p) {
     printf("%-32s %4s %11s\n", "Product", "Qty", "Price");
     printf("=================================================\n");
     for (int i = 0; i < PRODUCT_COUNT; i++) {
-        printf("%-32s %4d %11.2f\n", products[i], 
-                g_locs[p->loc].qty[i], 
-                g_locs[p->loc].price[i]); 
+        printf("%-32s %4d %11.2f\n", products[i],
+                g_locs[p->loc].qty[i],
+                g_locs[p->loc].price[i]);
     }
     printf("\n");
     printf("> OPTIONS:\n\n");
@@ -178,7 +178,7 @@ void do_travel(struct player * p) {
     int dst = -1;
     while (dst < 0 || dst >= LOCATION_COUNT) {
         printf("> ");
-        dst = getdigit() - 1; 
+        dst = getdigit() - 1;
     }
     if (dst != p->loc) p->turn++;
     p->loc = dst;
@@ -192,19 +192,19 @@ void do_buy(struct player * p) {
     int choice = -1;
     while (choice < 0 || choice >= PRODUCT_COUNT) {
         printf("> ");
-        choice = getdigit() - 1; 
+        choice = getdigit() - 1;
     }
     double price = g_locs[p->loc].price[choice];
     int qty = g_locs[p->loc].qty[choice];
     int max = p->currency / price;
-    int maxqty = max < qty ? max : qty; 
+    int maxqty = max < qty ? max : qty;
     qty = -1;
     while (qty < 0 || qty > maxqty) {
         printf("Choose QTY (max %d): ", maxqty);
         qty = getint();
     }
     struct loc * loc = &g_locs[p->loc];
-    p->currency -= qty * price; 
+    p->currency -= qty * price;
     p->count[choice] += qty;
     loc->qty[choice] -= qty;
     for (int i = 0; i < qty; i++) {
@@ -220,7 +220,7 @@ void do_sell(struct player * p) {
     int choice = -1;
     while (choice < 0 || choice >= PRODUCT_COUNT) {
         printf("> ");
-        choice = getdigit() - 1; 
+        choice = getdigit() - 1;
     }
     int qty = -1;
     while (qty < 0 || qty > p->count[choice]) {
@@ -228,7 +228,7 @@ void do_sell(struct player * p) {
         qty = getint();
     }
     struct loc * loc = &g_locs[p->loc];
-    p->currency += qty * loc->price[choice]; 
+    p->currency += qty * loc->price[choice];
     p->count[choice] -= qty;
     loc->qty[choice] += qty;
     for (int i = 0; i < qty; i++) {
@@ -256,7 +256,7 @@ void do_gamble(struct player * p) {
     }
     int choice = -1;
     while (choice < 0 || choice >= 5) {
-        choice = getdigit() - 1; 
+        choice = getdigit() - 1;
     }
     printf("\n");
     if (nums[choice] == wrong) {
@@ -276,10 +276,10 @@ int gameloop(void) {
     printf("\n");
     switch (action) {
         case 'q': return 0;
-        case 't': 
+        case 't':
             do_travel(&g_player);
             break;
-        case 'b': 
+        case 'b':
             do_buy(&g_player);
             break;
         case 's':
@@ -290,16 +290,16 @@ int gameloop(void) {
             break;
         case 'c':
             printf("What is your name? ");
-	    fflush(stdout); 
+	    fflush(stdout);
             getstr(g_player.name, 255);
             break;
-    } 
+    }
     printf("\n");
 
     if (g_player.turn == 30) {
         printf(">> The shady 0day dealer returns! <<\n");
         printf("She says, \"Did you gain enough respect to satisfy me?\"\n\n");
-        if (g_player.currency > 9447449) { 
+        if (g_player.currency > 9447449) {
             printf("\"Yes, I can see it in your eyes. I embrace you as one of us.\"\n\n");
             printf("-- YOU WIN --\n");
         } else {
