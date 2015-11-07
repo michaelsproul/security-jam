@@ -1,0 +1,5 @@
+# Turn of ASLR in GDB.
+set disable-randomization off
+
+# Shell with ASLR disabled.
+setarch `uname -m` -R /bin/bash
