@@ -1,4 +1,5 @@
 import os
+import sys
 import struct
 
 # White-space free shell code.
