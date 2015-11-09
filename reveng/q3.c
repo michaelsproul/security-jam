@@ -2,6 +2,7 @@
 #include <string.h>
 
 // Strip full-stop characters from a string, writing back to the original string.
+// NB: It's also buggy as written, because start should really equal `s` not `s + 1`.
 void strip_dots(char * s) {
     char * start = s + 1;
     char * end = s;
