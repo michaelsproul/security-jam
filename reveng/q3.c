@@ -11,7 +11,7 @@ void strip_dots(char * s) {
         end++;
     }
 
-    // Length of the string, not including null byte.
+    // Length of the string, not including null byte (or last char).
     size_t len = end - start;
 
     char * buffer = malloc(len);
